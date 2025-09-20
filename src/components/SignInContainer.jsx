@@ -1,20 +1,37 @@
+import React from 'react';
+import { View, StyleSheet, TextInput, Button } from 'react-native';
 import Text from './Text';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { View, StyleSheet, TextInput, Button } from 'react-native';
-import useSignIn from '../hooks/useSignIn';
-import { useNavigation } from '@react-navigation/native';
 
-const SignIn = () => {
-  const { signIn } = useSignIn();
-  const navigation = useNavigation();
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e1e4e8',
+    flexGrow: 1,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    backgroundColor: '#fff',
+    width: 250,
+  },
+  button: { marginTop: 10, width: 250 },
+  errorInput: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+  },
+});
 
-  const handleSignIn = async (values) => {
-    console.log('SignIn values:', values);
-    await signIn(values);
-    navigation.navigate('Repositories');
-  };
-
+const SignInContainer = ({ onSubmit }) => {
   const validationSchema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required'),
@@ -26,42 +43,14 @@ const SignIn = () => {
       password: '',
     },
     validationSchema,
-    onSubmit: values => {
-      handleSignIn(values);
-    },
-  });
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#e1e4e8',
-      flexGrow: 1,
-    },
-    input: {
-      height: 40,
-      borderColor: 'gray',
-      borderWidth: 1,
-      marginBottom: 12,
-      paddingHorizontal: 10,
-      borderRadius: 4,
-      backgroundColor: '#fff',
-      width: 250,
-    },
-    button: { marginTop: 10, width: 250 },
-    errorInput: {
-      borderColor: 'red',
-    },
-    errorText: {
-      color: 'red',
-    },
+    onSubmit,
   });
 
   return (
     <View style={styles.container}>
       <TextInput
         placeholder="Username"
+        testID="usernameInput"
         style={[
           styles.input,
           formik.touched.username && formik.errors.username && styles.errorInput,
@@ -76,6 +65,7 @@ const SignIn = () => {
       <TextInput
         placeholder="Password"
         secureTextEntry
+        testID="passwordInput"
         style={[
           styles.input,
           formik.touched.password && formik.errors.password && styles.errorInput,
@@ -86,12 +76,12 @@ const SignIn = () => {
       />
       {formik.touched.password && formik.errors.password && (
         <Text style={styles.errorText}>{formik.errors.password}</Text>
-        )}
+      )}
       <View style={styles.button}>
-        <Button title="Sign In" onPress={formik.handleSubmit} />
+        <Button title="Sign In" onPress={formik.handleSubmit} testID="submitButton" />
       </View>
     </View>
   );
 };
 
-export default SignIn;
+export default SignInContainer;

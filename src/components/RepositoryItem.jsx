@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Button } from 'react-native';
+import * as Linking from 'expo-linking';
 import Text from './Text';
 import theme from '../theme';
 
@@ -21,9 +21,14 @@ const Stat = ({ label, value }) => (
   </View>
 );
 
-const RepositoryItem = ({ repository }) => {
+const RepositoryItem = ({ repository, showGitHubButton }) => {
+  const handleOpenGitHub = () => {
+    if (repository.url) {
+      Linking.openURL(repository.url);
+    }
+  };
   return (
-    <View style={styles.container}>
+    <View testID="repositoryItem" style={styles.container}>
       <View style={styles.topRow}>
         <Image source={{ uri: repository.ownerAvatarUrl }} style={styles.avatar} />
         <View style={styles.info}>
@@ -38,6 +43,11 @@ const RepositoryItem = ({ repository }) => {
         <Stat label="Reviews" value={formatCount(repository.reviewCount)} />
         <Stat label="Rating" value={formatCount(repository.ratingAverage)} />
       </View>
+      {showGitHubButton && repository.url && (
+        <View style={{ marginTop: 16 }}>
+          <Button title="Open in GitHub" onPress={handleOpenGitHub} />
+        </View>
+      )}
     </View>
   );
 };
